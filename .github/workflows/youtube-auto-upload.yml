@@ -1,10 +1,7 @@
-name: YouTube Auto Upload
+name: YouTube Manual Upload
 
 on:
   workflow_dispatch:
-  schedule:
-    # 21:17 KST. Tue / Thu / Sat.
-    - cron: "17 12 * * 2,4,6"
 
 jobs:
   upload:
