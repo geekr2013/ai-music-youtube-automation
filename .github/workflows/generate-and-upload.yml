@@ -51,6 +51,24 @@ jobs:
       - name: Generate music video in Kaggle
         run: kaggle kernels push -p kaggle
 
+      - name: Wait for Kaggle generation
+        env:
+          KAGGLE_GENERATION_KERNEL_SLUG: ${{ vars.KAGGLE_GENERATION_KERNEL_SLUG || vars.KAGGLE_KERNEL_SLUG }}
+        run: |
+          for i in {1..60}; do
+            status=$(kaggle kernels status "$KAGGLE_GENERATION_KERNEL_SLUG" 2>&1 || true)
+            echo "$status"
+            if echo "$status" | grep -qi "complete"; then
+              exit 0
+            fi
+            if echo "$status" | grep -Eqi "error|failed|canceled"; then
+              exit 1
+            fi
+            sleep 30
+          done
+          echo "Kaggle generation did not finish within 30 minutes."
+          exit 1
+
       - name: Download generated assets
         env:
           KAGGLE_GENERATION_KERNEL_SLUG: ${{ vars.KAGGLE_GENERATION_KERNEL_SLUG || vars.KAGGLE_KERNEL_SLUG }}
