@@ -22,18 +22,17 @@ jobs:
           python-version: "3.11"
 
       - name: Install Kaggle CLI
-        run: pip install kaggle==1.6.17
+        run: pip install "kaggle>=1.8.0"
 
-      - name: Configure Kaggle credentials
+      - name: Check Kaggle authentication
         env:
-          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
-          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
         run: |
-          test -n "$KAGGLE_USERNAME"
-          test -n "$KAGGLE_KEY"
-          mkdir -p ~/.kaggle
-          printf '{"username":"%s","key":"%s"}' "$KAGGLE_USERNAME" "$KAGGLE_KEY" > ~/.kaggle/kaggle.json
-          chmod 600 ~/.kaggle/kaggle.json
+          if [ -z "$KAGGLE_API_TOKEN" ]; then
+            echo "KAGGLE_API_TOKEN is missing in GitHub Secrets."
+            exit 1
+          fi
+          kaggle kernels list --mine --page-size 1
 
       - name: Prepare Kaggle kernel metadata
         env:
@@ -41,10 +40,13 @@ jobs:
         run: node scripts/prepare-kaggle-kernel.js
 
       - name: Push and run Kaggle notebook
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
         run: kaggle kernels push -p kaggle
 
       - name: Download Kaggle outputs
         env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
           KAGGLE_KERNEL_SLUG: ${{ vars.KAGGLE_KERNEL_SLUG }}
         run: kaggle kernels output "$KAGGLE_KERNEL_SLUG" -p kaggle-output
 
