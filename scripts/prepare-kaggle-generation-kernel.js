@@ -7,9 +7,16 @@ if (!slug || !slug.includes("/")) {
   throw new Error("GitHub Variable KAGGLE_GENERATION_KERNEL_SLUG is required. Example: your-kaggle-name/ai-music-video-generator");
 }
 
+const slugName = slug.split("/")[1];
+const title = slugName
+  .split("-")
+  .filter(Boolean)
+  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+  .join(" ");
+
 const metadata = {
   id: slug,
-  title: "AI Music Video Generator",
+  title,
   code_file: "generate_music_video.py",
   language: "python",
   kernel_type: "script",
