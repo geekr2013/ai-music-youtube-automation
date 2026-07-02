@@ -37,11 +37,22 @@ jobs:
           KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
           KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
         run: |
-          test -n "$KAGGLE_USERNAME"
-          test -n "$KAGGLE_KEY"
+          if [ -z "$KAGGLE_USERNAME" ] || [ -z "$KAGGLE_KEY" ]; then
+            echo "KAGGLE_USERNAME or KAGGLE_KEY is missing in GitHub Secrets."
+            exit 1
+          fi
           mkdir -p ~/.kaggle
           printf '{"username":"%s","key":"%s"}' "$KAGGLE_USERNAME" "$KAGGLE_KEY" > ~/.kaggle/kaggle.json
           chmod 600 ~/.kaggle/kaggle.json
+
+      - name: Check Kaggle authentication
+        run: |
+          if ! kaggle kernels list --mine --page-size 1; then
+            echo "Kaggle authentication failed. Regenerate kaggle.json from Kaggle Settings > API and update GitHub Secrets."
+            echo "KAGGLE_USERNAME must be the username value from kaggle.json."
+            echo "KAGGLE_KEY must be the key value from kaggle.json."
+            exit 1
+          fi
 
       - name: Prepare Kaggle generation kernel
         env:
