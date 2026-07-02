@@ -1,0 +1,14 @@
+{
+  "name": "ai-music-youtube-automation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "upload:youtube": "node scripts/upload-youtube.js",
+    "check:queue": "node scripts/check-queue.js",
+    "prepare:kaggle": "node scripts/prepare-kaggle-kernel.js"
+  },
+  "dependencies": {
+    "googleapis": "^140.0.1"
+  }
+}
