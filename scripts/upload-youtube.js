@@ -84,7 +84,7 @@ const youtube = google.youtube({
 
 const videoPath = path.resolve(item.videoFile);
 const thumbnailPath = path.resolve(item.thumbnailFile);
-const privacyStatus = process.env.DEFAULT_PRIVACY_STATUS || "private";
+const privacyStatus = process.env.DEFAULT_PRIVACY_STATUS || "public";
 const discloseSynthetic = process.env.REQUIRE_SYNTHETIC_MEDIA_DISCLOSURE !== "false";
 
 await withRetry("Refresh YouTube token", 5, async () => {
