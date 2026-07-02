@@ -7,7 +7,13 @@ if (!slug || !slug.includes("/")) {
   throw new Error("GitHub Variable KAGGLE_GENERATION_KERNEL_SLUG is required. Example: your-kaggle-name/ai-music-video-generator");
 }
 
-const slugName = slug.split("/")[1];
+const [owner, slugName] = slug.split("/");
+const kaggleUsername = process.env.KAGGLE_USERNAME;
+
+if (kaggleUsername && owner.toLowerCase() !== kaggleUsername.toLowerCase()) {
+  throw new Error(`KAGGLE_GENERATION_KERNEL_SLUG owner (${owner}) must match KAGGLE_USERNAME (${kaggleUsername}).`);
+}
+
 const title = slugName
   .split("-")
   .filter(Boolean)
