@@ -1,0 +1,53 @@
+name: Kaggle Quality Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  kaggle:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Kaggle CLI
+        run: pip install kaggle
+
+      - name: Configure Kaggle credentials
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+        run: |
+          mkdir -p ~/.kaggle
+          printf '{"username":"%s","key":"%s"}' "$KAGGLE_USERNAME" "$KAGGLE_KEY" > ~/.kaggle/kaggle.json
+          chmod 600 ~/.kaggle/kaggle.json
+
+      - name: Prepare Kaggle kernel metadata
+        env:
+          KAGGLE_KERNEL_SLUG: ${{ vars.KAGGLE_KERNEL_SLUG }}
+        run: node scripts/prepare-kaggle-kernel.js
+
+      - name: Push and run Kaggle notebook
+        run: kaggle kernels push -p kaggle
+
+      - name: Download Kaggle outputs
+        env:
+          KAGGLE_KERNEL_SLUG: ${{ vars.KAGGLE_KERNEL_SLUG }}
+        run: kaggle kernels output "$KAGGLE_KERNEL_SLUG" -p kaggle-output
+
+      - name: Upload Kaggle outputs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kaggle-quality-output
+          path: kaggle-output
