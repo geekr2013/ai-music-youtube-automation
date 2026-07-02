@@ -92,7 +92,7 @@ jobs:
           YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
-          DEFAULT_PRIVACY_STATUS: ${{ vars.DEFAULT_PRIVACY_STATUS || 'private' }}
+          DEFAULT_PRIVACY_STATUS: ${{ vars.DEFAULT_PRIVACY_STATUS || 'public' }}
           REQUIRE_SYNTHETIC_MEDIA_DISCLOSURE: ${{ vars.REQUIRE_SYNTHETIC_MEDIA_DISCLOSURE || 'true' }}
         run: npm run upload:youtube
 
