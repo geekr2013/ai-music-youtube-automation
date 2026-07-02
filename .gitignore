@@ -1,0 +1,16 @@
+node_modules/
+npm-debug.log*
+.env
+.env.*
+kaggle.json
+.kaggle/
+kaggle-output/
+content/videos/*.mp4
+content/videos/*.mov
+content/videos/*.mkv
+content/videos/*.webm
+content/thumbnails/*.jpg
+content/thumbnails/*.jpeg
+content/thumbnails/*.png
+!content/videos/.gitkeep
+!content/thumbnails/.gitkeep
